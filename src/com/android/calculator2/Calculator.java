@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
+import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -120,8 +121,18 @@ public class Calculator extends Activity implements Logic.Listener, OnClickListe
     public void onCreate(Bundle state) {
         super.onCreate(state);
 
+        // If IME was opened from another app before the user launches us try to close it.
+        try {
+            InputMethodManager im =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception e) {
+        }
+
         // Disable IME for this application
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        getWindow().setFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN,
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         int sliderBackground = R.color.background;
         if(CalculatorSettings.useLightTheme(getContext())) {
